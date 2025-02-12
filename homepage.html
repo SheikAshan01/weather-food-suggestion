@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Suggestion by Weather</title>
+    <link rel="stylesheet" href="homepage.css" />
+  </head>
+  <body>
+    <section>
+      <div class="video-container">
+        <video autoplay loop muted id="background-video">
+          <source src="weather.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <div class="login-box">
+        <h2 class="color-white">Food Suggestion Based on Weather</h2>
+        <div class="input-box">
+          <label for="text">Enter your city:</label>
+          <input type="text" id="city" required />
+        </div>
+        <div id="weather-info" class="weather-info"></div>
+        <div id="food-suggestion" class="food-suggestion"></div>
+        <button onclick="getWeather()">Click Me...</button>
+        <button id="backButton">Back</button>
+      </div>
+    </section>
+
+    <script>
+      document.getElementById("backButton").addEventListener("click", function () {
+        window.location.href = "index.html";
+      });
+    
+      const apiKey = "1f43559d6b7a61b9aa422023c4c6ce00";
+    
+      function getWeather() {
+        const city = document.getElementById("city").value;
+        if (!city) {
+          alert("Please enter a city!");
+          return;
+        }
+    
+        fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.cod === "404") {
+              alert("City not found!");
+            } else {
+              displayWeather(data);
+              suggestFood(data);
+            }
+          })
+          .catch((error) => alert("Error fetching weather data!"));
+      }
+    
+      function displayWeather(data) {
+        const weatherInfo = document.getElementById("weather-info");
+        const temperature = data.main.temp;
+        const description = data.weather[0].description;
+        const humidity = data.main.humidity;
+        const windSpeed = data.wind.speed;
+    
+        weatherInfo.innerHTML = `
+                <h2>Weather in ${data.name}</h2>
+                <p>Temperature: ${temperature}°C</p>
+                <p>Condition: ${description}</p>
+                <p>Humidity: ${humidity}%</p>
+                <p>Wind Speed: ${windSpeed} m/s</p>
+            `;
+      }
+    
+      function suggestFood(data) {
+        const temperature = data.main.temp;
+        const description = data.weather[0].description.toLowerCase();
+        const humidity = data.main.humidity;
+        const windSpeed = data.wind.speed;
+        const foodSuggestion = document.getElementById("food-suggestion");
+    
+        let food = "";
+    
+        if (temperature > 35) {
+          food = "It's extremely hot! Stay hydrated with fresh juices and cold salads.";
+        } else if (temperature > 30) {
+          food = "It's hot! How about some refreshing ice cream or a cold salad?";
+        } else if (temperature > 25) {
+          food = "It's warm! A smoothie or a fruit bowl would be great.";
+        } else if (temperature > 20) {
+          food = "Nice and pleasant! Enjoy a light sandwich or a wrap.";
+        } else if (temperature > 15) {
+          food = "A bit cool! A warm pasta dish or soup would be nice.";
+        } else if (temperature > 10) {
+          food = "Chilly weather! Try a bowl of ramen or homemade stew.";
+        } else if (temperature > 5) {
+          food = "It's cold! A hot curry or baked dish would be comforting.";
+        } else {
+          food = "Freezing temperatures! Warm up with hot cocoa, soup, or a spicy meal.";
+        }
+    
+        if (description.includes("rain")) {
+          food += " Rainy weather calls for a cup of tea or coffee with some warm snacks.";
+        } else if (description.includes("snow")) {
+          food += " Snowy day? Enjoy a bowl of chili or a thick, creamy soup.";
+        } else if (description.includes("clear")) {
+          food += " Clear skies! A picnic with fresh sandwiches and fruit sounds perfect.";
+        } else if (description.includes("clouds")) {
+          food += " Cloudy weather! A hot cup of coffee and a pastry would be nice.";
+        } else if (description.includes("thunderstorm")) {
+          food += " Thunderstorms ahead! Comfort food like grilled cheese and soup is ideal.";
+        } else if (description.includes("mist") || description.includes("fog")) {
+          food += " Misty weather? How about a warm latte and a hearty breakfast?";
+        } else if (description.includes("drizzle")) {
+          food += " Light rain? A warm pastry or grilled cheese would be delightful.";
+        }
+    
+        if (humidity > 80) {
+          food += " It's very humid, so stick to light and fresh foods.";
+        } else if (humidity < 30) {
+          food += " The air is dry! Stay hydrated with soups and juicy fruits.";
+        }
+    
+        if (windSpeed > 10) {
+          food += " It's quite windy! A warm drink and comfort food sound great.";
+        }
+    
+        foodSuggestion.innerHTML = `<h3>Food Suggestion:</h3><p>${food}</p>`;
+      }
+    </script>
+    
+  </body>
+</html>
