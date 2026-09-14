@@ -17,13 +17,6 @@ with a simple and intuitive way to explore weather information.
 - CSS3
 - JavaScript
 
-## 📸 Screenshots
-
-Add project screenshots here.
-
-## 🚀 Live Demo
-
-[View Live Demo](YOUR-LIVE-LINK)
 
 ## 💻 Getting Started
 
